@@ -1,0 +1,687 @@
+
+<!doctype html>
+
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#4F7DC9">
+  <meta charset="UTF-8">
+  <title>Codelab: Crea una Lista de Tareas con Angular</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Code+Pro:400|Roboto:400,300,400italic,500,700|Roboto+Mono">
+  <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://storage.googleapis.com/claat-public/codelab-elements.css">
+  <style>
+    .success {
+      color: #1e8e3e;
+    }
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <google-codelab-analytics gaid="UA-49880327-14" ga4id=""></google-codelab-analytics>
+  <google-codelab codelab-gaid=""
+                  codelab-ga4id=""
+                  id="todo-app-angular"
+                  title="Codelab: Crea una Lista de Tareas con Angular"
+                  environment="web"
+                  feedback-link="">
+    
+      <google-codelab-step label="Objetivo" duration="0">
+        <ul>
+<li>Instalar Angular CLI.</li>
+<li>Crear un nuevo proyecto Angular.</li>
+<li>Crear y utilizar componentes.</li>
+<li>Gestionar datos con una lista de tareas.</li>
+<li>Implementar la interacción entre componentes.</li>
+<li>Usar Angular CLI para ejecutar y servir la aplicación.</li>
+</ul>
+<h2 is-upgraded>Requisitos previos:</h2>
+<p>Node.js y npm instalados. Puedes descargar node desde aquí <a href="https://nodejs.org/" target="_blank">nodejs.org</a></p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 1: Instalar Angular CLI" duration="5">
+        <p>Abre una terminal y ejecuta el siguiente comando para instalar Angular CLI:</p>
+<pre><code language="language-bash" class="language-bash">npm install -g @angular/cli
+</code></pre>
+<p>Este comando instala la CLI de Angular globalmente en tu sistema.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 2: Configurar el entorno" duration="5">
+        <p>Para crear un nuevo proyecto de Angular ejecuta en la terminal el siguiente comando:</p>
+<pre><code language="language-bash" class="language-bash">ng new todo --routing=false --style=css --ssr=false
+</code></pre>
+<p>El comando ng new crea una aplicación Angular inicial mínima. Los indicadores adicionales, <code>--routingy</code> <code>--style</code>, y <code>--ssrdefinen</code> dicen como manejar la navegación y los estilos en la aplicación, y configuran la representación del lado del servidor. Más adelante se describen estas características con más detalle.</p>
+<p>La primera vez que ejecute <code>ng</code>, es posible que se le pregunte si desea habilitar el análisis y el autocompletado del terminal. El autocompletado es conveniente porque al presionar <code>TAB</code> mientras se escriben comandos <code>ng</code> se mostrarán posibles opciones y se completarán automáticamente los argumentos.</p>
+<p>También puede decidir si desea permitir que se envíen análisis sobre el uso de CLI a los mantenedores de Angular en Google.</p>
+<p>Para ejecutar la aplicación, navega hasta tu nuevo proyecto con el comando cd y ejecute ng serve:</p>
+<pre><code language="language-bash" class="language-bash">cd todo
+ng serve
+</code></pre>
+<p>En el navegador, escribe <code>http://localhost:4200/</code> para ver su nueva aplicación de inicio. Si cambia alguno de los archivos fuente, la aplicación se recarga automáticamente.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 3: Familiarízate con tu aplicación Angular" duration="5">
+        <p>Los archivos fuente de la aplicación en los que se centra este codelab se encuentran en src/app:</p>
+<pre><code language="language-text" class="language-text">src/app
+├── app.component.css
+├── app.component.html
+├── app.component.spec.ts
+├── app.component.ts
+└── app.config.ts
+</code></pre>
+<p>Los archivos clave que la CLI genera automáticamente son los siguientes:</p>
+<ol type="1">
+<li>app.component.ts: También conocida como clase, contiene la lógica de la página principal de la aplicación.</li>
+<li>app.component.html: Contiene el HTML para AppComponent. El contenido de este archivo también se conoce como plantilla. La plantilla determina la vista o lo que ves en el navegador.</li>
+<li>app.component.css: Contiene los estilos para AppComponent. Utilice este archivo cuando desee definir estilos que solo se apliquen a un componente específico, a diferencia de su aplicación en general.</li>
+</ol>
+<p>Un componente en Angular se compone de tres partes principales: la plantilla, los estilos y la clase. Por ejemplo, app.component.ts, app.component.html y app.component.css juntos constituyen el AppComponent. Esta estructura separa la lógica, la vista y los estilos para que la aplicación sea más mantenible y escalable. De esta manera, estará utilizando las mejores prácticas desde el principio.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 4: Comencemos con nuestra aplicación de lista de tareas" duration="15">
+        <h2 is-upgraded>Primero definimos la estructura de la aplicación</h2>
+<p>Dentro de la etiqueta <code><body></code>, Angular usa un elemento especial <code><app-root></code> para insertar su componente principal, que a su vez incluye otros componentes que usted crea. Generalmente, no es necesario tocar el <code>index.html</code> y principalmente concentra su trabajo en áreas especializadas de su aplicación llamadas componentes.</p>
+<p>Reemplazamos el contenido del <code>index.html</code> con lo siguiente:</p>
+<pre><code language="language-html" class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&#34;es&#34;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&#34;utf-8&#34; /&gt;
+    &lt;title&gt;Todo&lt;/title&gt;
+    &lt;base href=&#34;/&#34; /&gt;
+    &lt;meta name=&#34;viewport&#34; content=&#34;width=device-width, initial-scale=1&#34; /&gt;
+    &lt;link rel=&#34;icon&#34; type=&#34;image/x-icon&#34; href=&#34;favicon.ico&#34; /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;app-root&gt;&lt;/app-root&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h2 is-upgraded>Ahora definamos un Item</h2>
+<p>En el directorio <code>app</code>, cree un nuevo archivo con el siguiente nombre <code>item.ts</code>:</p>
+<pre><code language="language-typescript" class="language-typescript">export interface Item {
+  description: string;
+  done: boolean;
+}
+</code></pre>
+<p>La interfaz Item crea un modelo item de objetos para que su aplicación comprenda qué es un item. Para esta lista de tareas pendientes, un item es un objeto que tiene una descripción y se puede marcar como completado.</p>
+<h2 is-upgraded>Agregamos lógica a AppComponent</h2>
+<p>Ahora que sabes qué es un item, puedes darle algunos elementos a tu aplicación agregándolos a la aplicación. En <code>app.component.ts</code>, reemplace el contenido con lo siguiente:</p>
+<pre><code language="language-typescript" class="language-typescript">import { Component } from &#34;@angular/core&#34;;
+import { CommonModule } from &#34;@angular/common&#34;;
+
+@Component({
+  standalone: true,
+  selector: &#34;app-root&#34;,
+  templateUrl: &#34;./app.component.html&#34;,
+  styleUrls: [&#34;./app.component.css&#34;],
+  imports: [CommonModule],
+})
+export class AppComponent {
+  componentTitle = &#34;Mi Lista de Tareas&#34;;
+
+  filter: &#34;all&#34; | &#34;active&#34; | &#34;done&#34; = &#34;all&#34;;
+
+  allItems = [
+    { description: &#34;comer&#34;, done: true },
+    { description: &#34;dormir&#34;, done: false },
+    { description: &#34;jugar&#34;, done: false },
+    { description: &#34;reír&#34;, done: false },
+  ];
+
+  get items() {
+    if (this.filter === &#34;all&#34;) {
+      return this.allItems;
+    }
+    return this.allItems.filter((item) =&gt;
+      this.filter === &#34;done&#34; ? item.done : !item.done
+    );
+  }
+}
+</code></pre>
+<p>Las dos primeras líneas son importaciones de JavaScript. En este caso están importando bibliotecas Angular. El decorador @Component() especifica metadatos sobre AppComponent. Aquí hay más información sobre los metadatos que estamos usando:</p>
+<ul>
+<li>standalone: Describe si el componente requiere un NgModule o no. Su aplicación administrará directamente las dependencias de las plantillas (componentes, directivas, etc.) mediante importaciones cuando sea independiente.</li>
+<li>selector: Le indica el selector CSS que utiliza en una plantilla para colocar este componente.</li>
+<li>templateUrl: Especifica el archivo HTML que se asociará con este componente.</li>
+<li>styleUrls: proporciona la ubicación y el nombre del archivo para los estilos que se aplican específicamente a este componente.</li>
+<li>imports: Le permite especificar las dependencias del componente que se pueden usar dentro de su plantilla.</li>
+</ul>
+<p>La propiedad <code>filter</code> es de tipo union, lo que significa que filter podría tener el valor de all, active o done. Con el tipo union, si comete un error tipográfico en el valor que asigna a la propiedad filter, TypeScript se lo informará para que pueda detectar el error lo antes posible. Esta guía le muestra cómo agregar filtros en un paso posterior, pero también puede usar un filtro para mostrar la lista predeterminada de todos los elementos.</p>
+<p>La matriz allItems contiene las tareas pendientes y si están terminadas. El primer elemento, <code>cpmer</code> tiene un valor <code>done</code> verdadero.</p>
+<p>El captador <code>get items()</code>, recupera los elementos de la matriz allItems si filter es igual a all. De lo contrario, get items() devuelve los elementos realizados o pendientes según cómo el usuario filtre la vista.</p>
+<h2 is-upgraded>Agrega HTML a la plantilla AppComponent</h2>
+<p>Para ver la lista de elementos en el navegador, reemplace el contenido de <code>app.component.html</code> con el siguiente HTML:</p>
+<pre><code language="language-html" class="language-html">&lt;div class=&#34;main&#34;&gt;
+  &lt;h1&gt;&#123;&#123; componentTitle }}&lt;/h1&gt;
+  &lt;h2&gt;¿Qué te gustaría hacer hoy?&lt;/h2&gt;
+
+  &lt;ul&gt;
+    &lt;li *ngFor=&#34;let item of items&#34;&gt;&#123;&#123;item.description}}&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+</code></pre>
+<p>El elemento <code>li</code> contiene una directiva <code>*ngFor</code> de Angular incorporada, que itera sobre los elementos de la matriz de items. Para cada elemento, <code>*ngFor</code> crea un nuevo <code>li</code>. Las llaves dobles que contienen <code>item.description</code> le indican a Angular que complete cada uno de los <code>li</code> con el texto de la descripción de cada elemento.</p>
+<p>En el navegador, deberías ver la lista de elementos de la siguiente manera:</p>
+<pre><code language="language-txt" class="language-txt">Mi lista de tareas
+¿Qué te gustaría hacer hoy?
+
+* comer
+* dormir
+* jugar
+* reir
+</code></pre>
+<h2 is-upgraded>Agregar elementos a la lista</h2>
+<p>Una lista de tareas pendientes necesita una forma de agregar elementos, así que comencemos. En <code>app.component.ts</code>, agregue el siguiente método a la clase después de la matriz allItems:</p>
+<pre><code language="language-typescript" class="language-typescript">addItem(description: string) {
+  if (!description) return;
+
+  this.allItems.unshift({
+    description,
+    done: false
+  });
+}
+</code></pre>
+<p>El método <code>addItem()</code> toma un elemento que proporciona el usuario y lo agrega a la matriz cuando el usuario hace clic en el botón Agregar. El método addItem() utiliza el método de matriz unshift() para agregar un nuevo elemento al principio de la matriz y al principio de la lista. Alternativamente, podría usar push(), lo que agregaría el nuevo elemento al final de la matriz y al final de la lista.</p>
+<p>Para utilizar el método addItem(), edite el HTML en la plantilla AppComponent. En <code>app.component.html</code>, reemplace el <code>h2</code> con lo siguiente:</p>
+<pre><code language="language-html" class="language-html">&lt;label for=&#34;addItemInput&#34;&gt;¿Qué te gustaría hacer hoy?&lt;/label&gt;
+
+&lt;input
+  #newItem
+  placeholder=&#34;ingresa una tarea&#34;
+  (keyup.enter)=&#34;addItem(newItem.value); newItem.value = &#39;&#39;&#34;
+  class=&#34;lg-text-input&#34;
+  id=&#34;addItemInput&#34;
+/&gt;
+
+&lt;button
+  class=&#34;btn-primary&#34;
+  (click)=&#34;addItem(newItem.value); newItem.value = &#39;&#39;&#34;
+&gt;
+  Agregar
+&lt;/button&gt;
+</code></pre>
+<p>En el HTML anterior, #newItem es una variable de plantilla. La variable de plantilla en este caso utiliza el elemento <code>input</code> como valor. Se puede hacer referencia a las variables de plantilla en cualquier lugar de la plantilla del componente.</p>
+<p>Cuando el usuario escribe un nuevo elemento en el <code>input</code> y presiona Enter , el método <code>addItem()</code> agrega el valor a la matriz allItems. Al presionar la tecla Enter también se restablece el valor de <code>input</code> a una cadena vacía. La variable de plantilla #newItem se utiliza para acceder al valor del elemento <code>input</code> en la plantilla. En lugar de presionar la tecla Intro , el usuario también puede hacer clic en el botón Agregar, que llama al mismo método addItem().</p>
+<p>Hasta aqui deberias tener un app basica de lista de tareas. En el próximo bloque agregaremos algunos estilos a la aplicación.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 5: Agregando algo de estilo a Angular" duration="10">
+        <p>Angular CLI genera dos tipos de archivos de estilo:</p>
+<ul>
+<li>Estilos de componentes: Angular CLI le da a cada componente su propio archivo de estilos. Los estilos de este archivo se aplican sólo a su componente.</li>
+<li>styles.css: En el directorio <code>src</code>, los estilos de este archivo se aplican a toda la aplicación a menos que especifique estilos a nivel de componente.</li>
+</ul>
+<p>Dependiendo de si está utilizando un preprocesador CSS, la extensión de sus archivos CSS puede variar. Angular admite <code>CSS simple</code>, <code>SCSS</code>, <code>Sass</code> y <code>Less</code>.</p>
+<p>En <code>src/styles.css</code>, pega los siguientes estilos:</p>
+<pre><code language="language-css" class="language-css">body {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.btn-wrapper {
+  /* flexbox */
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.btn {
+  color: #000;
+  background-color: #fff;
+  border: 2px solid #cecece;
+  padding: 0.35rem 1rem 0.25rem 1rem;
+  font-size: 1rem;
+}
+
+.btn:hover {
+  background-color: #ecf2fd;
+}
+
+.btn:active {
+  background-color: #d1e0fe;
+}
+
+.btn:focus {
+  outline: none;
+  border: black solid 2px;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #000;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.3rem;
+  border: black solid 2px;
+  margin: 1rem 0;
+}
+
+.btn-primary:hover {
+  background-color: #444242;
+}
+
+.btn-primary:focus {
+  color: #000;
+  outline: none;
+  border: #000 solid 2px;
+  background-color: #d7ecff;
+}
+
+.btn-primary:active {
+  background-color: #212020;
+}
+</code></pre>
+<p>El CSS <code>src/styles.css</code> se aplica a toda la aplicación; sin embargo, estos estilos no afectan todo el contenido de la página. El siguiente paso es agregar estilos que se apliquen específicamente al archivo AppComponent.</p>
+<p>En <code>app.component.css</code>, agregue los siguientes estilos:</p>
+<pre><code language="language-css" class="language-css">.main {
+  max-width: 500px;
+  width: 85%;
+  margin: 2rem auto;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%), 0 2.5rem 5rem 0 rgb(0 0 0 / 10%);
+}
+
+@media screen and (min-width: 600px) {
+  .main {
+    width: 70%;
+  }
+}
+
+label {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: block;
+  padding-bottom: 1rem;
+}
+
+.lg-text-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #000;
+  display: block;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.btn-wrapper {
+  margin-bottom: 2rem;
+}
+
+.btn-menu {
+  flex-basis: 32%;
+}
+
+.active {
+  color: green;
+}
+
+ul {
+  padding-inline-start: 0;
+}
+
+ul li {
+  list-style: none;
+}
+</code></pre>
+<p>El último paso es volver a visitar su navegador y observar cómo se ha actualizado el estilo. Las cosas ahora tienen un poco más de sentido.</p>
+<p>En el próximo bloque crearemos un componente adecuado para las tareas pendientes y lo haremos para que pueda verificar, editar y eliminar tareas pendientes.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 6: Creando el nuevo componente" duration="15">
+        <p>En la línea de comando, cree un componente nombrado <code>item</code> con el siguiente comando CLI:</p>
+<pre><code language="language-bash" class="language-bash">ng generate component item
+</code></pre>
+<p>El comando <code>ng generate component</code> crea un componente y una carpeta con el nombre que se especifique. Aquí, el nombre de la carpeta y del componente es item. Puede encontrar el itemdirectorio dentro de la appcarpeta:</p>
+<pre><code language="language-txt" class="language-txt">src/app/item
+├── item.component.css
+├── item.component.html
+├── item.component.spec.ts
+└── item.component.ts
+</code></pre>
+<p>Al igual que el AppComponent, el ItemComponent se compone de los siguientes archivos:</p>
+<ul>
+<li>item.component.html para HTML</li>
+<li>item.component.ts para la lógica</li>
+<li>item.component.css para estilos</li>
+<li>item.component.spec.ts para probar el componente</li>
+</ul>
+<p>Puede ver una referencia a los archivos HTML y CSS en los metadatos del decorador <code>@Component()</code> en <code>item.component.ts</code>.</p>
+<pre><code language="language-typescript" class="language-typescript">@Component({
+  selector: &#39;app-item&#39;,
+  standalone: true,
+  imports: [],
+  templateUrl: &#39;./item.component.html&#39;,
+  styleUrl: &#39;./item.component.css&#39;
+})
+</code></pre>
+<h2 is-upgraded>Agregar HTML para el componente de Item</h2>
+<p>Puede <code>ItemComponent</code> asumir la tarea de brindarle al usuario una forma de marcar elementos como terminados, editarlos o eliminarlos.</p>
+<p>Agregue marcado para administrar elementos reemplazando el contenido del marcador de posición <code>item.component.html</code> con lo siguiente:</p>
+<pre><code language="language-html" class="language-html">&lt;div class=&#34;item&#34;&gt;
+  &lt;input
+    [id]=&#34;item.description&#34;
+    type=&#34;checkbox&#34;
+    (change)=&#34;item.done = !item.done&#34;
+    [checked]=&#34;item.done&#34;
+  /&gt;
+  &lt;label [for]=&#34;item.description&#34;&gt;&#123;&#123;item.description}}&lt;/label&gt;
+
+  &lt;div class=&#34;btn-wrapper&#34; *ngIf=&#34;!editable&#34;&gt;
+    &lt;button class=&#34;btn&#34; (click)=&#34;editable = !editable&#34;&gt;Editar&lt;/button&gt;
+    &lt;button class=&#34;btn btn-warn&#34; (click)=&#34;remove.emit()&#34;&gt;Eliminar&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Esta sección se muestra solo si el usuario hace clic en el botón Editar --&gt;
+  &lt;div *ngIf=&#34;editable&#34;&gt;
+    &lt;input
+      class=&#34;sm-text-input&#34;
+      placeholder=&#34;edit item&#34;
+      [value]=&#34;item.description&#34;
+      #editedItem
+      (keyup.enter)=&#34;saveItem(editedItem.value)&#34;
+    /&gt;
+
+    &lt;div class=&#34;btn-wrapper&#34;&gt;
+      &lt;button class=&#34;btn&#34; (click)=&#34;editable = !editable&#34;&gt;Cancelar&lt;/button&gt;
+      &lt;button class=&#34;btn btn-save&#34; (click)=&#34;saveItem(editedItem.value)&#34;&gt;
+        Guardar
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p>La primera entrada es una casilla de verificación para que los usuarios puedan marcar elementos cuando estén completos. Las llaves dobles &#123;&#123;}}, en la casilla <code>label</code> de verificación significan la interpolación de Angular. Angular utiliza &#123;&#123;item.description}} para recuperar la descripción del item en la matriz items. La siguiente sección explica en detalle cómo los componentes comparten datos.</p>
+<p>Los siguientes dos botones para editar y eliminar el elemento actual se encuentran dentro de un <code>div</code>. En este <code>div</code> hay una directiva de Angular, <code>*ngIf</code> incorporada, que se puede usar para cambiar dinámicamente la estructura del DOM. Esto significa que si editable es false, este <code>div</code> está en el DOM. Si editable es true, Angular elimina el <code>div</code> del DOM.</p>
+<pre><code language="language-html" class="language-html">&lt;div class=&#34;btn-wrapper&#34; *ngIf=&#34;!editable&#34;&gt;
+  &lt;button class=&#34;btn&#34; (click)=&#34;editable = !editable&#34;&gt;Editar&lt;/button&gt;
+  &lt;button class=&#34;btn btn-warn&#34; (click)=&#34;remove.emit()&#34;&gt;Eliminar&lt;/button&gt;
+&lt;/div&gt;
+</code></pre>
+<p>Cuando un usuario hace clic en el botón Editar, editable se vuelve verdadero, lo que elimina este <code>div</code> y sus elementos secundarios del DOM. Si, en lugar de hacer clic en Editar, un usuario hace clic en Eliminar, <code>ItemComponent</code> genera un evento que notifica a AppComponent la eliminación.</p>
+<p><code>*ngIf</code> también está en el siguiente <code>div</code>, pero tiene un valor editable de true. En este caso, si editable es true, Angular coloca el <code>div</code> y sus elementos secundarios en el DOM.</p>
+<pre><code language="language-html" class="language-html">&lt;!-- Esta sección se muestra solo si el usuario hace clic en el botón Editar --&gt;
+&lt;div *ngIf=&#34;editable&#34;&gt;
+  &lt;input
+    class=&#34;sm-text-input&#34;
+    placeholder=&#34;edit item&#34;
+    [value]=&#34;item.description&#34;
+    #editedItem
+    (keyup.enter)=&#34;saveItem(editedItem.value)&#34;
+  /&gt;
+
+  &lt;div class=&#34;btn-wrapper&#34;&gt;
+    &lt;button class=&#34;btn&#34; (click)=&#34;editable = !editable&#34;&gt;Cancelar&lt;/button&gt;
+    &lt;button class=&#34;btn btn-save&#34; (click)=&#34;saveItem(editedItem.value)&#34;&gt;
+      Guardar
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p>Con <code>[value]="item.description"</code>, el valor de <code>input</code> está vinculado al description del elemento actual. Este enlace hace que el item sea el valor del <code>input</code>. Entonces, si description es comer, description ya está en el <code>input</code>. De esta manera, cuando el usuario edita el elemento, el valor de <code>input</code> ya es comer.</p>
+<p>La variable de plantilla, <code>#editedItem</code> significa que Angular almacena todo lo que un usuario escribe en el <code>input</code> en una variable llamada editedItem. El evento <code>keyup</code> llama al método <code>saveItem()</code> y pasa el valor editedItem si el usuario elige presionar Intro en lugar de hacer clic en Guardar.</p>
+<p>Cuando un usuario hace clic en el botón Cancelar, editable cambia a false, lo que elimina la entrada y los botones para editar del DOM. Cuando editable es false, Angular vuelve a colocar en el <code>div</code> los botones Editar y Eliminar en el DOM.</p>
+<p>Al hacer clic en el botón Guardar se llama al método <code>saveItem()</code>. El método saveItem() toma el valor del elemento <code>#editedItem</code> y lo cambia con <code>editedItem.value</code>.</p>
+<h2 is-upgraded>Prepare el componente de la aplicación</h2>
+<p>En la siguiente sección, agregará código que se basa en la comunicación entre AppComponent y ItemComponent. Agregue la siguiente línea cerca de la parte superior del archivo <code>app.component.ts</code> para importar Item:</p>
+<pre><code language="language-typescript" class="language-typescript">import { Item } from &#34;./item&#34;;
+import { ItemComponent } from &#34;./item/item.component&#34;;
+</code></pre>
+<p>Luego, configure AppComponent agregando lo siguiente a la clase del mismo archivo:</p>
+<pre><code language="language-typescript" class="language-typescript">remove(item: Item) {
+  this.allItems.splice(this.allItems.indexOf(item), 1);
+}
+</code></pre>
+<p>El método <code>remove()</code> utiliza el método JavaScript <code>Array.splice()</code> para eliminar un elemento en el elemento indexOf relevante. En términos sencillos, esto significa que el método splice() elimina el elemento de la matriz.</p>
+<h2 is-upgraded>Agregar lógica a ItemComponent</h2>
+<p>Para usar la interfaz de usuario ItemComponent, debe agregar lógica al componente, como funciones y formas de entrada y salida de datos. En <code>item.component.ts</code>, edite las importaciones de JavaScript de la siguiente manera:</p>
+<pre><code language="language-typescript" class="language-typescript">import { Component, Input, Output, EventEmitter } from &#34;@angular/core&#34;;
+import { CommonModule } from &#34;@angular/common&#34;;
+import { Item } from &#34;../item&#34;;
+</code></pre>
+<p>La adición de Input, Output y EventEmitter permite que ItemComponent comparta datos con AppComponent. Al importar Item, ItemComponent pueden entender qué es un item. Puede actualizar para que @Component use CommonModule en <code>app/item/item.component.ts</code> para que podamos usar las rectivas ngIfdi:</p>
+<pre><code language="language-typescript" class="language-typescript">@Component({
+  selector: &#39;app-item&#39;,
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: &#39;./item.component.html&#39;,
+  styleUrl: &#39;./item.component.css&#39;,
+})
+</code></pre>
+<p>Más abajo <code>item.component.ts</code>, reemplace la ItemComponent clase generada con lo siguiente:</p>
+<pre><code language="language-typescript" class="language-typescript">export class ItemComponent {
+  editable = false;
+
+  @Input() item!: Item;
+  @Output() remove = new EventEmitter&lt;Item&gt;();
+
+  saveItem(description: string) {
+    if (!description) return;
+
+    this.editable = false;
+    this.item.description = description;
+  }
+}
+</code></pre>
+<p>La propiedad editable ayuda a alternar una sección de la plantilla donde un usuario puede editar un elemento. editable es la misma propiedad en HTML que en la declaración *ngIf, <code>*ngIf="editable"</code>. Cuando usas una propiedad en la plantilla, también debes declararla en la clase.</p>
+<p>Para usar el selector ItemComponent dentro de AppComponent, agrega el elemento , <code>app-item</code> que corresponde al selector que definiste para la clase de componente <code>app.component.html</code>. Reemplace la lista desordenada actual <code>ul</code> con <code>app.component.html</code>:</p>
+<pre><code language="language-html" class="language-html">&lt;h2&gt;
+  &#123;&#123;items.length}}
+  &lt;span *ngIf=&#34;items.length === 1; else elseBlock&#34;&gt;Tarea&lt;/span&gt;
+  &lt;ng-template #elseBlock&gt;Tareas&lt;/ng-template&gt;
+&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li *ngFor=&#34;let i of items&#34;&gt;
+    &lt;app-item (remove)=&#34;remove(i)&#34; [item]=&#34;i&#34;&gt;&lt;/app-item&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+</code></pre>
+<p>Cambie el imports en <code>app.component.ts</code> para incluir <code>ItemComponent</code> así como <code>CommonModule</code>:</p>
+<pre><code language="language-typescript" class="language-typescript">@Component({
+  standalone: true,
+  selector: &#39;app-root&#39;,
+  templateUrl: &#39;./app.component.html&#39;,
+  styleUrls: [&#39;./app.component.css&#39;],
+  imports: [CommonModule, ItemComponent],
+})
+</code></pre>
+<h2 is-upgraded>Agregar estilos a ItemComponent</h2>
+<p>Puede utilizar la hoja de estilos de un componente para agregar estilos específicos de ese componente. El siguiente CSS agrega estilos básicos, flexbox para los botones y casillas de verificación personalizadas.</p>
+<p>Pegue los siguientes estilos en item.component.css.</p>
+<pre><code language="language-css" class="language-css">.item {
+  padding: 0.5rem 0 0.75rem 0;
+  text-align: left;
+  font-size: 1.2rem;
+}
+
+.btn-wrapper {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.btn {
+  /* menu buttons flexbox styles */
+  flex-basis: 49%;
+}
+
+.btn-save {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.btn-save:hover {
+  background-color: #444242;
+}
+
+.btn-save:focus {
+  background-color: #fff;
+  color: #000;
+}
+
+.checkbox-wrapper {
+  margin: 0.5rem 0;
+}
+
+.btn-warn {
+  background-color: #b90000;
+  color: #fff;
+  border-color: #9a0000;
+}
+
+.btn-warn:hover {
+  background-color: #9a0000;
+}
+
+.btn-warn:active {
+  background-color: #e30000;
+  border-color: #000;
+}
+
+.sm-text-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 2px solid #555;
+  display: block;
+  box-sizing: border-box;
+  font-size: 1rem;
+  margin: 1rem 0;
+}
+
+/* Custom checkboxes
+Adapted from https://css-tricks.com/the-checkbox-hack/#custom-designed-radio-buttons-and-checkboxes */
+
+/* Base for label styling */
+[type=&#34;checkbox&#34;]:not(:checked),
+[type=&#34;checkbox&#34;]:checked {
+  position: absolute;
+  left: -9999px;
+}
+[type=&#34;checkbox&#34;]:not(:checked) + label,
+[type=&#34;checkbox&#34;]:checked + label {
+  position: relative;
+  padding-left: 1.95em;
+  cursor: pointer;
+}
+
+/* checkbox aspect */
+[type=&#34;checkbox&#34;]:not(:checked) + label:before,
+[type=&#34;checkbox&#34;]:checked + label:before {
+  content: &#34;&#34;;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.25em;
+  height: 1.25em;
+  border: 2px solid #ccc;
+  background: #fff;
+}
+
+/* checked mark aspect */
+[type=&#34;checkbox&#34;]:not(:checked) + label:after,
+[type=&#34;checkbox&#34;]:checked + label:after {
+  content: &#34;\2713\0020&#34;;
+  position: absolute;
+  top: 0.15em;
+  left: 0.22em;
+  font-size: 1.3em;
+  line-height: 0.8;
+  color: #0d8dee;
+  transition: all 0.2s;
+  font-family: &#34;Lucida Sans Unicode&#34;, &#34;Arial Unicode MS&#34;, Arial;
+}
+/* checked mark aspect changes */
+[type=&#34;checkbox&#34;]:not(:checked) + label:after {
+  opacity: 0;
+  transform: scale(0);
+}
+[type=&#34;checkbox&#34;]:checked + label:after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* accessibility */
+[type=&#34;checkbox&#34;]:checked:focus + label:before,
+[type=&#34;checkbox&#34;]:not(:checked):focus + label:before {
+  border: 2px dotted blue;
+}
+</code></pre>
+<p>Ahora debería tener una aplicación de lista de tareas pendientes con estilo Angular donde se puede agregar, editar y eliminar elementos. El siguiente paso es agregar filtros para que pueda ver los elementos que cumplen con criterios específicos.</p>
+
+
+      </google-codelab-step>
+    
+      <google-codelab-step label="Paso 7: Filtrar tareas" duration="15">
+        <p>El filtrado de elementos se basa en la propiedad <code>filter</code> que agregó anteriormente <code>app.component.ts</code>:</p>
+<pre><code language="language-typescript" class="language-typescript">filter: &#39;all&#39; | &#39;active&#39; | &#39;done&#39; = &#39;all&#39;;
+</code></pre>
+<p>El valor predeterminado para el filtro es <code>all</code>, pero también puede ser <code>active</code> o <code>done</code>.</p>
+<h2 is-upgraded>Agregar controles de filtro</h2>
+<p>En <code>app.component.html</code>, agregue el siguiente HTML debajo del botón Agregar pero encima de la sección que enumera los elementos. En el siguiente fragmento, las secciones existentes en su HTML están en los comentarios para que pueda ver exactamente dónde colocar los botones.</p>
+<pre><code language="language-html" class="language-html">&lt;!-- &lt;button class=&#34;btn-primary&#34; (click)=&#34;addItem(newItem.value)&#34;&gt;Add&lt;/button&gt;
+ --&gt;
+
+&lt;!-- Botones que muestran todo, lo que queda por hacer o lo que se ha hecho al hacer clic --&gt;
+&lt;div class=&#34;btn-wrapper&#34;&gt;
+  &lt;button
+    class=&#34;btn btn-menu&#34;
+    [class.active]=&#34;filter == &#39;all&#39;&#34;
+    (click)=&#34;filter = &#39;all&#39;&#34;
+  &gt;
+    All
+  &lt;/button&gt;
+
+  &lt;button
+    class=&#34;btn btn-menu&#34;
+    [class.active]=&#34;filter == &#39;active&#39;&#34;
+    (click)=&#34;filter = &#39;active&#39;&#34;
+  &gt;
+    To Do
+  &lt;/button&gt;
+
+  &lt;button
+    class=&#34;btn btn-menu&#34;
+    [class.active]=&#34;filter == &#39;done&#39;&#34;
+    (click)=&#34;filter = &#39;done&#39;&#34;
+  &gt;
+    Done
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- &lt;h2&gt;&#123;&#123;items.length}} item(s)&lt;/h2&gt;
+         &lt;ul&gt;... --&gt;
+</code></pre>
+<p>Al hacer clic en los botones se cambian los valores filter, lo que determina los items que se muestran, así como los estilos que Angular aplica al botón activo.</p>
+<ul>
+<li>Si el usuario hace clic en el botón Todo , se muestran todos los elementos.</li>
+<li>Si el usuario hace clic en el botón Tareas pendientes , solo se muestran los elementos con un donevalor de false.</li>
+<li>Si el usuario hace clic en el botón Listo , solo se muestran los elementos con un donevalor de true.</li>
+</ul>
+
+
+      </google-codelab-step>
+    
+  </google-codelab>
+
+  <script src="https://storage.googleapis.com/claat-public/native-shim.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/custom-elements.min.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/prettify.js"></script>
+  <script src="https://storage.googleapis.com/claat-public/codelab-elements.js"></script>
+  <script src="//support.google.com/inapp/api.js"></script>
+
+</body>
+</html>

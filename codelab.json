@@ -1,0 +1,17 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2024-05-24T01:13:43-05:00",
+  "id": "todo-app-angular",
+  "duration": 70,
+  "title": "Codelab: Crea una Lista de Tareas con Angular",
+  "summary": "Lista de Tareas",
+  "source": "todo-app-angular.md",
+  "theme": "",
+  "status": null,
+  "category": null,
+  "tags": [],
+  "url": "todo-app-angular"
+}
